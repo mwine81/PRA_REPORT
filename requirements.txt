@@ -3,3 +3,6 @@ duckdb
 jupyter
 pyarrow
 pandas
+marimo
+altair
+rich
