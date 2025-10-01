@@ -50,5 +50,18 @@ def load_base_data() -> pl.LazyFrame:
         .join(ndcs, on='ndc')
     )
 
-
+(
+load_base_data()
+.group_by(c.product)
+.agg(
+    cs.matches('^standard.*gross|cash|negotiated_dollar').n_unique().name.suffix('_unique_count'),
+)
+.select(
+    cs.numeric().min().round(2).name.suffix('_min'),
+    cs.numeric().max().round(2).name.suffix('_max'),
+    cs.numeric().mean().round(2).name.suffix('_avg'),
+)
+.select(~cs.matches('(?i)calculated'))
+.collect(engine="streaming")
+)
 
