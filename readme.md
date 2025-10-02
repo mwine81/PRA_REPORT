@@ -1,4 +1,5 @@
 ### Objective
+- [ ] Classify each line (NDC or HCPCS) to a specific GPI-10 Value
 - [ ] Universe as measured by 1 unit
 - [ ] Simple count of number of unique prices
 - [ ] Inpatient/ Outpatient distinction
@@ -22,8 +23,10 @@
 
 ### Hospital Stats updated
 - [x] 340B stats – how many hospitals in database are flagged as 340B Covered Entities
+    - hospital.ipynb
 
 - [x] Bed stats- min, max, average, median, standard deviation on bed characteristics
+    - hospital.ipynb
 ### Product Universe Stats
 
 - [ ] How many unique products in database, how many products per hospital on average (min, max, median, std of products per hospital)

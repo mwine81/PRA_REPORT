@@ -50,12 +50,8 @@ def load_base_data() -> pl.LazyFrame:
         .join(ndcs, on='ndc')
     )
 
-# (
-# load_base_data()
-# .select(cs.all().is_null().sum())
-# .collect(engine="streaming")
-# .glimpse()
-# )
+if __name__ == "__main__":
+    pass
 
-pl.scan_parquet(r"C:\Users\mwine\3 Axis Advisors Dropbox\Matthew matt@3axisadvisors.com\datalake\projects\SEPT_2025\PRA\data_sept_2025\hospital_files\has_pricing\5.parquet").collect(engine='streaming').glimpse()
+
 

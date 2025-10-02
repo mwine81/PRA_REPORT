@@ -1,3 +1,5 @@
 config.py
 .venv
 scratch.py
+./data
+*.csv

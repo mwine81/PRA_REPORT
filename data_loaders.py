@@ -70,14 +70,8 @@ if __name__ == "__main__":
 
     (
     DataLoaders()
-    .load_hospital_price_table()
-    .filter(gpi_2_filter(gpi_2_groups=search_terms))
-    .select(pl.len())
+    .load_medispan_table()
+    .filter(c.product.str.contains('(?i)lisinopril'))
     .collect(engine="streaming")
     .glimpse()
-    # .join(DataLoaders.load_ndc_name_table(), on="ndc", how="left")
-    # .group_by(c.product)
-    # .agg(c.hospital_id.n_unique().alias("num_hospitals"))
-    # .sort(c.num_hospitals, descending=True)
-    # .sink_csv(PRA_REPORT_QUERIES / "num_hospitals_by_drug.csv")
     )
