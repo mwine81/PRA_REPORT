@@ -50,18 +50,12 @@ def load_base_data() -> pl.LazyFrame:
         .join(ndcs, on='ndc')
     )
 
-(
-load_base_data()
-.group_by(c.product)
-.agg(
-    cs.matches('^standard.*gross|cash|negotiated_dollar').n_unique().name.suffix('_unique_count'),
-)
-.select(
-    cs.numeric().min().round(2).name.suffix('_min'),
-    cs.numeric().max().round(2).name.suffix('_max'),
-    cs.numeric().mean().round(2).name.suffix('_avg'),
-)
-.select(~cs.matches('(?i)calculated'))
-.collect(engine="streaming")
-)
+# (
+# load_base_data()
+# .select(cs.all().is_null().sum())
+# .collect(engine="streaming")
+# .glimpse()
+# )
+
+pl.scan_parquet(r"C:\Users\mwine\3 Axis Advisors Dropbox\Matthew matt@3axisadvisors.com\datalake\projects\SEPT_2025\PRA\data_sept_2025\hospital_files\has_pricing\5.parquet").collect(engine='streaming').glimpse()
 
