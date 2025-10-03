@@ -50,27 +50,25 @@ def load_base_data() -> pl.LazyFrame:
         .join(ndcs, on='ndc')
     )
 
+def show(lazy_frame: pl.LazyFrame) -> None:
+    return lazy_frame.collect(engine="streaming").glimpse()
+
 if __name__ == "__main__":
     (
-    dl
-    .load_hospital_price_table_with_drug_names()
-    .group_by('hospital_id')
-    # get unique counts of drug_name, hcpcs, ndc at hospital level
-    .agg(
-        c.drug_name.n_unique().alias('drugs_unique'),
-        c.hcpcs.n_unique().alias('hcpcs_unique'),
-        c.ndc.n_unique().alias('ndcs_unique')
+        dl
+        .load_hospital_price_table_with_drug_names()
+        .group_by('hospital_id')
+        .agg(
+            c.payer_name.n_unique().alias('unique_payers'),
+            c.plan_name.n_unique().alias('unique_drug_names'),
+        )
+        .select(cs.numeric().mean().round(1))
+        .pipe(show)
     )
-    .select(
-        # get average, min, max, stddev of unique drug_name, hcpcs, ndc counts across hospitals
-        cs.numeric().mean().cast(pl.Int32).name.prefix('avg_'),
-        cs.numeric().min().cast(pl.Int32).name.prefix('min_'),
-        cs.numeric().max().cast(pl.Int32).name.prefix('max_'),
-        cs.numeric().std().cast(pl.Int32).name.prefix('std_'),
-    )
-    .collect(engine="streaming")
-    .glimpse()
-    )
+        
+    
+    
+    
 
 
 
