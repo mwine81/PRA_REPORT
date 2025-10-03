@@ -1,5 +1,10 @@
+### Methods
+- [x] Add `drug_name` to pricing table using GPI-10 logic
+    - see analysis_all_drugs.ipynb from logic
+
+
 ### Objective
-- [ ] Classify each line (NDC or HCPCS) to a specific GPI-10 Value
+
 - [ ] Universe as measured by 1 unit
 - [ ] Simple count of number of unique prices
 - [ ] Inpatient/ Outpatient distinction
@@ -29,7 +34,10 @@
     - hospital.ipynb
 ### Product Universe Stats
 
-- [ ] How many unique products in database, how many products per hospital on average (min, max, median, std of products per hospital)
+- [x] How many unique products in database
+    - analysis_all_drugs.ipynb
+- [x] How many products per hospital on average (min, max, median, std of products per hospital)
+    - hospitals.ipynb
 - [ ] Break out universe of products into GPI-4 categories. Identify what categories are most represented by what we have vs. least. What percentage of each GPI-4 category total universe do we have pricing for (if there are 14 unique GPI values in a given GPI-4 (making it up) and we only have 2 we’d say for that one we have coverage of 2/14).
 - [ ] Break out product coverage into 340B hospitals vs. none (are there appreciable differences in the products we see pricing for based upon 340B stats – thinking of like cancer drugs)
 - [ ] For pricing universe information

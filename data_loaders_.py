@@ -40,10 +40,6 @@ class DataLoaders:
     def load_medispan_table() -> pl.LazyFrame:
         return pl.scan_parquet(MEDISPAN_PATH)
     
-    @staticmethod
-    def load_hospital_price_table_with_drug_names() -> pl.LazyFrame:
-        return add_standard_drug_name(DataLoaders.load_hospital_price_table())
-    
 
 
 if __name__ == "__main__":
@@ -71,6 +67,4 @@ if __name__ == "__main__":
         return [ndcs, hcpcs]
 
     def gpi_2_filter(gpi_2_groups: list[str]) -> pl.Expr:
-        return c.ndc.is_in(get_ndcs_hcpcs(gpi_2_groups)[0])
-    
-
+        return c.ndc.is_in(get_ndcs_hcpcs(gpi_2_groups)[0]) 
