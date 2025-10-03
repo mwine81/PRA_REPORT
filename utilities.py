@@ -1,6 +1,7 @@
 import polars as pl
 from polars import col as c
 import polars.selectors as cs
+from IPython.display import Image, display
 
 class CustomExpressions:
 
@@ -39,3 +40,20 @@ class CustomExpressions:
     def pct_negotiated_gt_cash() -> pl.Expr:
         # sum boolean true values and divide by total count to get percentage
         return (c.standard_charge_negotiated_dollar.gt(c.standard_charge_discounted_cash).sum().truediv(pl.len()).round(4).alias('pct_price_gt_cash_price'))
+    
+
+def render_plotly_figure(fig, name):
+    """
+    Render a Plotly figure as both a static PNG and an inline image in a Jupyter notebook.
+    Parameters:
+    - fig: Plotly figure object to render.
+    - name: Base name for saving the PNG file (without extension).
+    """
+    # Save a static PNG (will be embedded in the notebook output and therefore visible on GitHub)
+    png_path = f"fig/{name}.png"
+
+    # write static PNG (requires kaleido)
+    fig.write_image(png_path, width=800, height=600, scale=2)
+
+    # display the PNG inline (this output will be stored in the notebook and rendered by GitHub)
+    display(Image(png_path))
