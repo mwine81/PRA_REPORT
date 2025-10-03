@@ -19,9 +19,11 @@
 - [ ] Disease state specific
 - [ ] Drug specific example at the ASP billing unit level
 - [ ] Random Forest model of 6 select products; Correlation matrix for variables (?)
-- [ ] Hospital size / state / 340B status
-- [ ] Inpatient/outpatient
-- [ ] Number of insurers
+- [x] Hospital size / state / 340B status
+    - see hospital.ipynb for 340B and bed stats
+- [x] Inpatient/outpatient
+- [x] Number of insurers
+    - see hospitals.ipynb for unique payer and plan counts per hospital (distribution and average)
 - [ ] Region (NE/Midewest, South, West Coast)
 
 ### Discussion
