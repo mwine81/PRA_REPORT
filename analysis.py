@@ -1,8 +1,10 @@
+import console
 from data_loaders import DataLoaders as dl
 import polars as pl
 from polars import col as c
 import polars.selectors as cs
 import importlib
+from console import console
 
 def cancer_predicate():
     """
@@ -53,17 +55,36 @@ def load_base_data() -> pl.LazyFrame:
 def show(lazy_frame: pl.LazyFrame) -> None:
     return lazy_frame.collect(engine="streaming").glimpse()
 
+def is_inpatient_predicate() -> pl.Expr:
+    """
+    Predicate to identify outpatient services based on the 'place_of_service' column.
+    """
+    return cs.matches('(?i)setting').str.contains('(?i)both|in').or_(cs.matches('(?i)setting').is_null()).alias('is_inpatient')
+
 if __name__ == "__main__":
-    (
+    product_selection = 'drug_name'
+    console.print(
         dl
         .load_hospital_price_table_with_drug_names()
-        .group_by('hospital_id')
+        .filter(c.setting.str.contains('(?i)in|out'))
+        .group_by(c.hospital_id, c.setting, product_selection)
         .agg(
-            c.payer_name.n_unique().alias('unique_payers'),
-            c.plan_name.n_unique().alias('unique_drug_names'),
+            c.standard_charge_negotiated_dollar.mean().round(2),
         )
-        .select(cs.numeric().mean().round(1))
-        .pipe(show)
+        .collect(engine='streaming')
+        .pivot(
+            on='setting',
+            index=['hospital_id', product_selection],
+        )
+        .filter(c.outpatient.is_not_null() & c.inpatient.is_not_null())
+        .with_columns(c.outpatient.sub(c.inpatient).round(2).alias('outpatient_diff'))
+        .select(
+            pl.len().alias('row_ct'),
+            c.hospital_id.n_unique().alias('unique_hospitals'),
+            c.outpatient.mean().round(2).alias('avg_outpatient_price'),
+            c.inpatient.mean().round(2).alias('avg_inpatient_price'),
+            c.outpatient_diff.mean().round(2).alias('avg_outpatient_diff'),
+        )
     )
         
     

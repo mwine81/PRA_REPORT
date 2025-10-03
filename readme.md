@@ -6,8 +6,11 @@
 ### Objective
 
 - [ ] Universe as measured by 1 unit
-- [ ] Simple count of number of unique prices
-- [ ] Inpatient/ Outpatient distinction
+- [x] Simple count of number of unique prices
+    - see analysis_all_drugs.ipynb (conpleted based on average unique prices by hospital over ndc, gpi-10, hcpcs)
+- [x] Inpatient/ Outpatient distinction
+    - see hospitals.ipynb for inpatient/outpatient hospital characteristics
+    - see analysis_all_drugs.ipynb for inpatient/outpatient price comparison at product selection level [ndc, gpi-10, hcpcs]
 - [ ] Gross price world
 - [ ] Cash price world
 - [ ] Negotiated cash price world
