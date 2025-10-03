@@ -6,3 +6,5 @@ pandas
 marimo
 altair
 rich
+seaborn
+plotly
