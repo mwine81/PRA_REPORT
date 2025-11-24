@@ -61,30 +61,37 @@ def is_inpatient_predicate() -> pl.Expr:
     """
     return cs.matches('(?i)setting').str.contains('(?i)both|in').or_(cs.matches('(?i)setting').is_null()).alias('is_inpatient')
 
+def payment_cols() -> pl.Expr:
+    return cs.matches('(?i)gross|cash|dollar$')
+
+def standardize_single_unit() -> pl.Expr:
+    """
+    Standardize the drug unit of measurement to '1 UNIT'.
+    """
+    return payment_cols().truediv(cs.matches('(?i)unit')).round(4)
+
+
+
 if __name__ == "__main__":
-    product_selection = 'drug_name'
-    console.print(
+    product_selection = 'hcpcs'
+    console.log(
         dl
         .load_hospital_price_table_with_drug_names()
-        .filter(c.setting.str.contains('(?i)in|out'))
-        .group_by(c.hospital_id, c.setting, product_selection)
-        .agg(
-            c.standard_charge_negotiated_dollar.mean().round(2),
-        )
-        .collect(engine='streaming')
-        .pivot(
-            on='setting',
-            index=['hospital_id', product_selection],
-        )
-        .filter(c.outpatient.is_not_null() & c.inpatient.is_not_null())
-        .with_columns(c.outpatient.sub(c.inpatient).round(2).alias('outpatient_diff'))
-        .select(
-            pl.len().alias('row_ct'),
-            c.hospital_id.n_unique().alias('unique_hospitals'),
-            c.outpatient.mean().round(2).alias('avg_outpatient_price'),
-            c.inpatient.mean().round(2).alias('avg_inpatient_price'),
-            c.outpatient_diff.mean().round(2).alias('avg_outpatient_diff'),
-        )
+        #.filter(c.hospital_id == 'bffa8e3d-dcb6-45f0-a2c6-cf546cca6e8f')
+        .filter(pl.col(product_selection).is_not_null())
+        .with_columns(standardize_single_unit())
+        .filter(c.standard_charge_negotiated_dollar > .01)
+        .with_columns(c.setting.fill_null('Unknown').alias('setting'))
+        .with_columns(c.standard_charge_negotiated_dollar.mean().over([ product_selection, 'setting', 'drug_type_of_measurement']).round(2).alias('avg_negotiated_dollar'))
+        .with_columns(c.standard_charge_negotiated_dollar.std().over([product_selection, 'setting', 'drug_type_of_measurement']).round(2).alias('std_negotiated_dollar'))
+        .with_columns(c.standard_charge_negotiated_dollar.sub(c.avg_negotiated_dollar).truediv(c.std_negotiated_dollar).round(4).alias('z_score_negotiated_dollar'))
+        .filter(c.z_score_negotiated_dollar.is_infinite().or_(c.z_score_negotiated_dollar.is_null().or_(c.z_score_negotiated_dollar.is_nan())).not_())
+        .group_by('hospital_id',product_selection)
+        .agg(c.z_score_negotiated_dollar.mean().round(4))
+        .group_by('hospital_id')
+        .agg(c.z_score_negotiated_dollar.mean().round(4).alias('avg_z_score_negotiated_dollar'))
+        .sort('avg_z_score_negotiated_dollar', descending=True)
+        .collect(engine="streaming")
     )
         
     

@@ -11,11 +11,10 @@
 - [x] Inpatient/ Outpatient distinction
     - see hospitals.ipynb for inpatient/outpatient hospital characteristics
     - see analysis_all_drugs.ipynb for inpatient/outpatient price comparison at product selection level [ndc, gpi-10, hcpcs]
-- [ ] Gross price world
-- [ ] Cash price world
-- [ ] Negotiated cash price world
+- [x] Cash price world
+- [x] Negotiated cash price world
 - [ ] Hospital measure of price variability their each of their own specific charge masters
-- [ ] Simple count of the number of services where the cash discount is lower
+- [x] Simple count of the number of services where the cash discount is lower
 - [ ] Disease state specific
 - [ ] Drug specific example at the ASP billing unit level
 - [ ] Random Forest model of 6 select products; Correlation matrix for variables (?)
